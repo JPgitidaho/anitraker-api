@@ -1,0 +1,398 @@
+:root {
+  --bg: #f9fafb;
+  --card: #ffffff;
+  --text: #111827;
+  --primary: #2563eb;
+  --secondary: #f59e0b;
+  --danger: #dc2626;
+  --button: #e50914;
+  --button-hover: #ff1e28;
+  --brand: #ff1744;
+}
+
+.dark {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --text: #f1f5f9;
+  --primary: #3b82f6;
+  --secondary: #fbbf24;
+  --danger: #ef4444;
+  --button: #e50914;
+  --button-hover: #ff1e28;
+  --brand: var(--primary);
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+header {
+  background: var(--card);
+  padding: 1rem;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0;
+  color: var(--text);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 
+    0 0 2px #ff1744,
+    0 0 6px #ff1744;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+}
+
+.logo {
+  height: 70px;
+  width: auto;
+}
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+}
+
+
+.desktop-nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+.desktop-nav a {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.mobile-nav {
+  display: none;
+  justify-content: space-around;
+  align-items: center;
+  background: var(--card);
+  padding: 0.5rem 0;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.mobile-nav a {
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+nav a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+main {
+  padding: 2rem;
+  min-height: 60vh;
+}
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  background: var(--card);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.hero h2 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.hero input {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.6rem 1rem;
+  border: 1px solid #333;
+  border-radius: 25px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 1rem;
+}
+/* categories*/
+.categories {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.categories button {
+  padding: 0.5rem 1rem;
+  background: var(--button);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+}
+
+.categories button:hover {
+  background: var(--button-hover);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+  padding: 0.5rem;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 8px;
+  overflow: hidden;
+  text-align: center;
+  padding: 0.5rem;
+}
+
+.card img {
+  width: 100%;
+  aspect-ratio: 3 / 4; 
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.card h3 {
+  margin: 0.3rem 0;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.card p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.card button {
+  margin-top: 0.3rem;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  background: var(--button);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+}
+
+
+.card button:hover {
+  background: var(--button-hover);
+}
+
+.error {
+  text-align: center;
+  color: var(--danger);
+}
+.card .actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.card .watch-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  background: var(--button);
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.card .watch-btn:hover {
+  background: var(--button-hover);
+}
+
+.card .details-link {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.card .details-link:hover {
+  color: var(--text);
+}
+
+
+/* Watchlist */
+#watchlist {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+#watchlist .card {
+  background: var(--card);
+}
+
+#watchlist .remove-btn {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  background: var(--danger);
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#watchlist .remove-btn:hover {
+  background: #b91c1c;
+}
+
+/*Details page*/
+
+.anime-detail {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  background: var(--card);
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.anime-detail img {
+  width: 100%;
+  border-radius: 6px;
+}
+
+.anime-info h2 {
+  margin-top: 0;
+  font-size: 2rem;
+}
+
+.anime-info p {
+  color: var(--text-secondary);
+  margin: 0.5rem 0;
+}
+
+.anime-info .tags {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.anime-info .tags span {
+  background: #333;
+  color: var(--text);
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+.anime-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.anime-actions button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.anime-actions .watch-btn {
+  background: var(--button);
+  color: #fff;
+}
+
+.anime-actions .trailer-btn {
+  background: #555;
+  color: #fff;
+}
+
+.characters, .recommended {
+  margin-top: 2rem;
+}
+
+.characters h3, .recommended h3 {
+  margin-bottom: 1rem;
+}
+
+.character-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 1rem;
+}
+
+.character-card {
+  text-align: center;
+}
+
+.character-card img {
+  width: 100%;
+  border-radius: 4px;
+}
+
+.recommended-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+footer {
+  background: var(--card);
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
+}
+
+
+@media (min-width: 768px) {
+  .hero input {
+    width: 50%;
+  }
+
+  .cards {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .desktop-nav {
+    display: none;
+  }
+  .mobile-nav {
+    display: flex;
+  }
+}
