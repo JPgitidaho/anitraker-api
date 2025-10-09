@@ -2,7 +2,6 @@ export function initCarousel(trackSelector) {
   const track = document.querySelector(trackSelector)
   if (!track) return
 
-  // Busca el contenedor principal (section.carousel-container)
   const container = track.closest(".carousel-container")
   if (!container) return
 

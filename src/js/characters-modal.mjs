@@ -22,18 +22,18 @@ export async function openCharacterModal(id) {
           </div>
           <div class="modal-right">
             <h2>${char.name}</h2>
-            ${char.name_kanji ? `<p class="kanji">${char.name_kanji}</p>` : ""}
+            ${char.name_kanji ? `<h3>${char.name_kanji}</h3>` : ""}
             ${
               char.nicknames && char.nicknames.length
-                ? `<p class="nicknames">Also known as: ${char.nicknames.join(", ")}</p>`
+                ? `<h4>Also known as: ${char.nicknames.join(", ")}</h4>`
                 : ""
             }
             ${
               char.about
-                ? `<p class="about">${char.about.replace(/\n/g, "<br>")}</p>`
+                ? `<p >${char.about.replace(/\n/g, "<br>")}</p>`
                 : "<p>No description available.</p>"
             }
-            <p class="favorites">❤️ Favorites: ${char.favorites ?? 0}</p>
+            <p>❤️ Favorites: ${char.favorites ?? 0}</p>
           </div>
         </div>
       </div>

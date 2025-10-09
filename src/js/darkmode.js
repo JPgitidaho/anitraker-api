@@ -1,11 +1,16 @@
 export function initDarkModeToggle() {
   const toggle = document.createElement("button")
-  toggle.textContent = "☀️"
   toggle.classList.add("theme-toggle")
+
+  const current = localStorage.getItem("theme") || "light"
+  const isDark = current === "dark"
+  document.body.classList.toggle("dark", isDark)
+  toggle.textContent = isDark ? "☀️" : "🌙"
   document.body.appendChild(toggle)
 
   toggle.addEventListener("click", () => {
-    document.body.classList.toggle("dark")
-    toggle.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙"
+    const nowDark = document.body.classList.toggle("dark")
+    toggle.textContent = nowDark ? "☀️" : "🌙"
+    localStorage.setItem("theme", nowDark ? "dark" : "light")
   })
 }
