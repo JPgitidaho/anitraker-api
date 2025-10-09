@@ -30,7 +30,7 @@ export async function renderHome() {
         <div class="hero-contain">
           <h2>${title}</h2>
           <p>${truncateText(description, 220)}</p>
-          <button class="details-btn" data-title="${title}">View Details</button>
+          <button class="details-btn" data-title="${title}">Details</button>
         </div>
       </section>
 
