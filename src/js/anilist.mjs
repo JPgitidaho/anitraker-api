@@ -45,7 +45,7 @@ export async function getTopRatedAnimes() {
   return data?.Page?.media ?? []
 }
 
-// Top 10 popular animes of the current season (for carousel)
+// Top 10 
 export async function getSeasonalTop() {
   const now = new Date()
   const year = now.getFullYear()
@@ -109,4 +109,39 @@ export async function getTrendingAnime() {
   `
   const data = await fetchAniList(query)
   return data?.Page?.media?.[0]
+}
+// Search anime by title (used in search.mjs)
+export async function searchAnimes(keyword) {
+  const query = `
+    query ($search: String) {
+      Page(page: 1, perPage: 10) {
+        media(search: $search, type: ANIME, sort: POPULARITY_DESC) {
+          id
+          title {
+            romaji
+            english
+          }
+          coverImage {
+            large
+          }
+        }
+      }
+    }
+  `
+  try {
+    const res = await fetch("https://graphql.anilist.co", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query,
+        variables: { search: keyword }
+      })
+    })
+
+    const json = await res.json()
+    return json?.data?.Page?.media ?? []
+  } catch (err) {
+    console.error("❌ AniList search error:", err)
+    return []
+  }
 }

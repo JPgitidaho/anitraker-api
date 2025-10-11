@@ -17,11 +17,11 @@ export function setItem(key, value) {
   }
 }
 
-// Add item to a list (e.g. watchlist or favorites)
+// Add item to a list 
 export function addToList(key, item) {
   const list = getItem(key)
 
-  // Prevent duplicates (compares stringified IDs)
+  // Prevent duplicates 
   const exists = list.some(i => String(i.id) === String(item.id))
   if (exists) return
 

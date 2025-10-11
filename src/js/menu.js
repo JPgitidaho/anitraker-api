@@ -28,13 +28,13 @@ export function initDropdownMenu() {
 
   if (!dropdown || !toggle) return
 
-  // Mostrar y ocultar con clic
+ 
   toggle.addEventListener("click", e => {
     e.preventDefault()
     dropdown.classList.toggle("active")
   })
 
-  // Cerrar si se hace clic fuera
+
   document.addEventListener("click", e => {
     if (!dropdown.contains(e.target)) {
       dropdown.classList.remove("active")

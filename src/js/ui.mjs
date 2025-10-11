@@ -17,7 +17,9 @@ async function loadPartial(id, path) {
   } else if (id === "footer") {
     document.body.appendChild(container)
   }
+  return container
 }
+
 
 function initHamburgerMenu() {
   const toggle = document.querySelector(".menu-toggle")
