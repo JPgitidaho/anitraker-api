@@ -7,5 +7,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   await initUI()
   initDarkModeToggle()
   renderHome()
-  initSearchModal()  
+  initSearchModal()
 })

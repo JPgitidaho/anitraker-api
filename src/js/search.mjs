@@ -1,14 +1,12 @@
-import { searchAnimes } from "./anilist.mjs"
+import { renderPage } from "./ui.mjs"
 
 export async function initSearchModal() {
-  
   const container = document.createElement("div")
   document.body.appendChild(container)
 
   const html = await fetch("/partials/search-modal.html").then(res => res.text())
   container.innerHTML = html
 
- 
   const openBtn = document.getElementById("search-btn")
   const overlay = document.getElementById("search-overlay")
   const closeBtn = document.getElementById("close-search")
@@ -17,13 +15,11 @@ export async function initSearchModal() {
 
   if (!openBtn || !overlay) return
 
-
   openBtn.addEventListener("click", () => {
     overlay.classList.remove("hidden")
     document.body.classList.add("no-scroll")
     input.focus()
   })
-
 
   const closeModal = () => {
     overlay.classList.add("hidden")
@@ -33,36 +29,38 @@ export async function initSearchModal() {
   }
 
   closeBtn.addEventListener("click", closeModal)
-  overlay.addEventListener("click", (e) => {
+  overlay.addEventListener("click", e => {
     if (e.target === overlay) closeModal()
   })
-  document.addEventListener("keydown", (e) => {
+  document.addEventListener("keydown", e => {
     if (e.key === "Escape") closeModal()
   })
 
-
   let handle
-  input.addEventListener("input", async (e) => {
+  input.addEventListener("input", async e => {
     const q = e.target.value.trim()
     results.innerHTML = ""
     if (handle) clearTimeout(handle)
     handle = setTimeout(async () => {
       if (q.length < 3) return
-      const items = await searchAnimes(q)
-      results.innerHTML = items.map(a => `
+      const items = await import("./anilist.mjs").then(m => m.searchAnimes(q))
+      results.innerHTML = items
+        .map(
+          a => `
         <div class="result-item" data-id="${a.id}">
           <img src="${a.coverImage.large}" alt="${a.title.english || a.title.romaji}">
           <span>${a.title.english || a.title.romaji}</span>
-        </div>
-      `).join("")
+        </div>`
+        )
+        .join("")
     }, 250)
   })
 
-  results.addEventListener("click", (e) => {
+  results.addEventListener("click", e => {
     const card = e.target.closest(".result-item")
     if (!card) return
     const id = card.dataset.id
     closeModal()
-    window.location.href = `/details.html?id=${id}`
+    renderPage("details", id)
   })
 }

@@ -15,8 +15,7 @@ export function initDarkModeToggle() {
 
   `
 
-  const current = localStorage.getItem("theme") || "light"
-  const isDark = current === "dark"
+  const isDark = localStorage.getItem("theme") === "dark"
   document.body.classList.toggle("dark", isDark)
   toggle.innerHTML = isDark ? sunIcon : moonIcon
   document.body.appendChild(toggle)

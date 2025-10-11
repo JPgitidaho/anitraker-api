@@ -21,21 +21,16 @@ export async function getTopRatedAnimes() {
     query {
       Page(page: 1, perPage: 25) {
         media(
-          type: ANIME,
-          sort: SCORE_DESC,
-          averageScore_greater: 80,
+          type: ANIME
+          sort: SCORE_DESC
+          averageScore_greater: 80
           popularity_greater: 1000
         ) {
           id
-          title {
-            romaji
-            english
-          }
+          title { romaji english }
           description(asHtml: false)
           bannerImage
-          coverImage {
-            extraLarge
-          }
+          coverImage { extraLarge }
           averageScore
         }
       }
@@ -45,7 +40,6 @@ export async function getTopRatedAnimes() {
   return data?.Page?.media ?? []
 }
 
-// Top 10 
 export async function getSeasonalTop() {
   const now = new Date()
   const year = now.getFullYear()
@@ -63,19 +57,14 @@ export async function getSeasonalTop() {
     query ($season: MediaSeason, $year: Int) {
       Page(page: 1, perPage: 10) {
         media(
-          season: $season,
-          seasonYear: $year,
-          type: ANIME,
+          season: $season
+          seasonYear: $year
+          type: ANIME
           sort: POPULARITY_DESC
         ) {
           id
-          title {
-            romaji
-            english
-          }
-          coverImage {
-            large
-          }
+          title { romaji english }
+          coverImage { large }
           averageScore
         }
       }
@@ -85,22 +74,15 @@ export async function getSeasonalTop() {
   const data = await fetchAniList(query, variables)
   return data?.Page?.media ?? []
 }
+
 export async function getTrendingAnime() {
   const query = `
     query {
       Page(page: 1, perPage: 1) {
-        media(
-          type: ANIME,
-          sort: TRENDING_DESC
-        ) {
+        media(type: ANIME, sort: TRENDING_DESC) {
           id
-          title {
-            english
-            romaji
-          }
-          coverImage {
-            extraLarge
-          }
+          title { english romaji }
+          coverImage { extraLarge }
           bannerImage
           averageScore
         }
@@ -110,38 +92,19 @@ export async function getTrendingAnime() {
   const data = await fetchAniList(query)
   return data?.Page?.media?.[0]
 }
-// Search anime by title (used in search.mjs)
+
 export async function searchAnimes(keyword) {
   const query = `
     query ($search: String) {
       Page(page: 1, perPage: 10) {
         media(search: $search, type: ANIME, sort: POPULARITY_DESC) {
           id
-          title {
-            romaji
-            english
-          }
-          coverImage {
-            large
-          }
+          title { romaji english }
+          coverImage { large }
         }
       }
     }
   `
-  try {
-    const res = await fetch("https://graphql.anilist.co", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        query,
-        variables: { search: keyword }
-      })
-    })
-
-    const json = await res.json()
-    return json?.data?.Page?.media ?? []
-  } catch (err) {
-    console.error("❌ AniList search error:", err)
-    return []
-  }
+  const data = await fetchAniList(query, { search: keyword })
+  return data?.Page?.media ?? []
 }

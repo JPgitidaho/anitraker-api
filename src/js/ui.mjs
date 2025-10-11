@@ -1,9 +1,15 @@
-import { initDropdownMenu } from "./menu.js"
+import { initMenuToggle, initDropdownMenu } from "./menu.js"
+import { renderHome } from "./home.mjs"
+import { renderDetails } from "./details.mjs"
+import { renderFavorites } from "./favorites.mjs"
+import { renderWatchlist } from "./watchlist.mjs"
 
 export async function initUI() {
   await loadPartial("header", "/partials/header.html")
   await loadPartial("footer", "/partials/footer.html")
+  initMenuToggle()
   initDropdownMenu()
+  setupNavigation()
 }
 
 async function loadPartial(id, path) {
@@ -13,34 +19,38 @@ async function loadPartial(id, path) {
   container.innerHTML = html
   if (id === "header") {
     document.body.insertBefore(container, document.body.firstChild)
-    initHamburgerMenu()
   } else if (id === "footer") {
     document.body.appendChild(container)
   }
   return container
 }
 
-
-function initHamburgerMenu() {
-  const toggle = document.querySelector(".menu-toggle")
-  const nav = document.querySelector(".desktop-nav")
-  if (!toggle || !nav) return
-
-  const overlay = document.createElement("div")
-  overlay.classList.add("menu-overlay")
-  document.body.appendChild(overlay)
-
-  toggle.addEventListener("click", () => {
-    const open = nav.classList.toggle("open")
-    toggle.textContent = open ? "✕" : "☰"
-    overlay.classList.toggle("show", open)
-    document.body.classList.toggle("no-scroll", open)
+function setupNavigation() {
+  document.addEventListener("click", e => {
+    const link = e.target.closest("[data-page]")
+    if (!link) return
+    e.preventDefault()
+    const page = link.dataset.page
+    renderPage(page)
   })
+}
 
-  overlay.addEventListener("click", () => {
-    nav.classList.remove("open")
-    overlay.classList.remove("show")
-    document.body.classList.remove("no-scroll")
-    toggle.textContent = "☰"
-  })
+export function renderPage(page, id = null) {
+  switch (page) {
+    case "home":
+      renderHome()
+      break
+    case "details":
+      if (id) renderDetails(id)
+      break
+    case "favorites":
+      renderFavorites()
+      break
+    case "watchlist":
+      renderWatchlist()
+      break
+    default:
+      renderHome()
+      break
+  }
 }

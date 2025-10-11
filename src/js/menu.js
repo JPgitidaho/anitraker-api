@@ -3,9 +3,12 @@ export function initMenuToggle() {
   const nav = document.querySelector(".desktop-nav")
   if (!toggle || !nav) return
 
-  const overlay = document.createElement("div")
-  overlay.classList.add("menu-overlay")
-  document.body.appendChild(overlay)
+  let overlay = document.querySelector(".menu-overlay")
+  if (!overlay) {
+    overlay = document.createElement("div")
+    overlay.classList.add("menu-overlay")
+    document.body.appendChild(overlay)
+  }
 
   toggle.addEventListener("click", () => {
     const open = nav.classList.toggle("open")
@@ -25,19 +28,14 @@ export function initMenuToggle() {
 export function initDropdownMenu() {
   const dropdown = document.querySelector(".dropdown")
   const toggle = dropdown?.querySelector(".dropdown-toggle")
-
   if (!dropdown || !toggle) return
 
- 
   toggle.addEventListener("click", e => {
     e.preventDefault()
     dropdown.classList.toggle("active")
   })
 
-
   document.addEventListener("click", e => {
-    if (!dropdown.contains(e.target)) {
-      dropdown.classList.remove("active")
-    }
+    if (!dropdown.contains(e.target)) dropdown.classList.remove("active")
   })
 }
