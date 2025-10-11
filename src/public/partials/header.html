@@ -1,12 +1,33 @@
 <div class="header-container">
-    <img src="/images/logo.png" alt="AniTracker Logo" style="max-height:50px;">
     <h1>ANITRACKER</h1>
+
+    <button class=" menu-toggle" aria-label="Toggle navigation">
+        ☰
+    </button>
+
     <nav class="desktop-nav">
         <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">❯ Watchlist</a></li>
-            <li><a href="#">❯ Favorites</a></li>
-            <li><a href="#">❯ Profile</a></li>
+            <li><a href="#" data-page="home">❯ Home</a></li>
+            <li><a href="#" data-page="watchlist">❯ Watchlist</a></li>
+            <li><a href="#" data-page="favorites">❯ Favorites</a></li>
+            <li><a href="#" data-page="profile">❯ Profile</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle">❯ Categories ▼</a>
+                <ul class="dropdown-menu">
+                    <li><a href="#" data-cat="anilist">Top 10</a></li>
+                    <li><a href="#" data-cat="trending">Trending</a></li>
+                    <li><a href="#" data-cat="seasonal">Seasonal</a></li>
+                    <li><a href="#" data-cat="genres">Genres</a></li>
+                </ul>
+            </li>
         </ul>
     </nav>
+    <button id="search-btn" class="search-btn" aria-label="Search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+    </button>
+
 </div>

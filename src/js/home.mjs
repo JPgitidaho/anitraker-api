@@ -1,26 +1,48 @@
-import { getData } from "./api.mjs"
-import { getSeasonalTop } from "./anilist.mjs"
-import { addToList, truncateText, cleanDescription } from "./storage.mjs"
-import { renderPage } from "./ui.mjs"
-import { initCarousel, disableCarousel } from "./carousel.mjs"
-
+import { getTopRatedAnimes, getSeasonalTop, getTrendingAnime } from "./anilist.mjs"
+import { truncateText, cleanDescription } from "./storage.mjs"
+import { initCarousel } from "./carousel.mjs"
 
 export async function renderHome() {
+  console.log("renderHome is running ✅")
   const app = document.getElementById("app")
   app.innerHTML = `<div class="loader"></div>`
 
-  const aniListData = await getSeasonalTop()
-  const topAnimes = aniListData ?? []
+  let animes = await getTopRatedAnimes()
 
-  if (!topAnimes.length) {
-    app.innerHTML = `<p class="error">Failed to load data from AniList.</p>`
-    return
+  // ✅ Filter: only animes with a valid bannerImage
+  animes = animes.filter(a => a.bannerImage)
+
+  // ✅ Fallback if none have bannerImage
+  if (!animes.length) {
+    console.warn("No animes with bannerImage found, using fallback data")
+    animes = [
+      {
+        title: { english: "Solo Leveling", romaji: "Ore dake Level Up na Ken" },
+        description:
+          "In a world where hunters battle monsters, Jinwoo Sung rises as the world's strongest.",
+        bannerImage: "https://cdn.myanimelist.net/images/anime/1815/142017l.jpg",
+        averageScore: 89,
+      },
+      {
+        title: {
+          english: "Attack on Titan Final Season",
+          romaji: "Shingeki no Kyojin",
+        },
+        description:
+          "Humanity fights for survival against terrifying Titans in a brutal world.",
+        bannerImage: "https://cdn.myanimelist.net/images/anime/1000/110531l.jpg",
+        averageScore: 95,
+      },
+    ]
   }
+
+  // ✅ Limit to top 5 banners for hero rotation
+  animes = animes.slice(0, 5)
 
   let current = 0
 
-  const renderShell = (anime) => {
-    const img = anime.coverImage.large
+  const renderHero = (anime) => {
+    const img = anime.bannerImage
     const title = anime.title.english || anime.title.romaji
     const description = cleanDescription(anime.description ?? "No synopsis available.")
 
@@ -30,219 +52,93 @@ export async function renderHome() {
         <div class="hero-contain">
           <h2>${title}</h2>
           <p>${truncateText(description, 220)}</p>
-          <button class="details-btn" data-title="${title}">Details</button>
+          <button class="details-btn" disabled>Details</button>
         </div>
       </section>
 
-      <div class="search-box">
-        <input type="text" id="search" placeholder="Search anime or manga...">
-        <button id="search-btn" aria-label="Search" class="search-icon-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-               viewBox="0 0 24 24" width="22" height="22">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-        </button>
-      </div>
-
-      <section class="categories">
-        <button data-cat="anilist">Top 10</button>
-        <button data-cat="trending">Trending</button>
-        <button data-cat="seasonal">Seasonal</button>
-        <button data-cat="genres">Genres</button> 
-      </section>
-
       <section class="carousel-container">
+        <h3 class="subt">🔥 Most Popular This Season</h3>
         <button class="carousel-btn left">❮</button>
         <div id="anime-list" class="cards carousel-track"></div>
         <button class="carousel-btn right">❯</button>
       </section>
     `
-
-    document.querySelector(".details-btn").addEventListener("click", async () => {
-      await openDetailsFromAniList(title)
-    })
-
-    const searchInput = document.getElementById("search")
-    const searchBtn = document.getElementById("search-btn")
-    const doSearch = () => {
-      const term = searchInput.value.trim()
-      if (term) loadAnime(`/anime?q=${encodeURIComponent(term)}&limit=20`)
-    }
-    searchInput.addEventListener("keypress", e => e.key === "Enter" && doSearch())
-    searchBtn.addEventListener("click", doSearch)
-
-    const categories = document.querySelector(".categories")
-    categories.querySelector('[data-cat="anilist"]').addEventListener("click", () => loadAniListSeasonal())
-    categories.querySelector('[data-cat="trending"]').addEventListener("click", () => loadAnime("/top/anime?limit=20"))
-    categories.querySelector('[data-cat="seasonal"]').addEventListener("click", () => loadAnime("/seasons/now?limit=20"))
-    categories.querySelector('[data-cat="genres"]').addEventListener("click", () => loadGenres())
   }
 
-  const updateHeroOnly = (anime) => {
+  const updateHero = (anime) => {
     const hero = document.querySelector(".hero")
     const img = hero.querySelector(".hero-img")
     const title = hero.querySelector("h2")
     const desc = hero.querySelector("p")
-    const btn = hero.querySelector(".details-btn")
-
-    if (hero) hero.style.setProperty("--hero-img", `url('${anime.coverImage.large}')`)
-    if (img) img.src = anime.coverImage.large
+    const newImg = anime.bannerImage
+    if (hero) hero.style.setProperty("--hero-img", `url('${newImg}')`)
+    if (img) img.src = newImg
     if (title) title.textContent = anime.title.english || anime.title.romaji
-    if (desc) desc.textContent = truncateText(cleanDescription(anime.description ?? "No synopsis available."), 220)
-    if (btn) btn.dataset.title = anime.title.english || anime.title.romaji
+    if (desc)
+      desc.textContent = truncateText(
+        cleanDescription(anime.description ?? ""),
+        220
+      )
   }
 
-  renderShell(topAnimes[current])
+  renderHero(animes[current])
   setInterval(() => {
-    current = (current + 1) % topAnimes.length
-    updateHeroOnly(topAnimes[current])
+    current = (current + 1) % animes.length
+    updateHero(animes[current])
   }, 7000)
 
-  loadAniListSeasonal()
+  await renderCarousel()
+  await renderMiniHero()
 }
 
-async function openDetailsFromAniList(title) {
-  const data = await getData(`/anime?q=${encodeURIComponent(title)}&limit=1`)
-  const match = data?.data?.[0]
-  if (match) renderPage("details", match.mal_id)
-  else alert("Details not available for this anime.")
-}
-
-async function loadAniListSeasonal() {
+async function renderCarousel() {
   const track = document.querySelector(".carousel-track")
   if (!track) return
   track.innerHTML = `<div class="loader"></div>`
 
-  try {
-    const items = await getSeasonalTop()
-    if (!items.length) {
-      track.innerHTML = `<p class="error">No results from AniList.</p>`
-      return
-    }
+  const items = await getSeasonalTop()
+  if (!items || !items.length) {
+    track.innerHTML = `<p class="error">No data for this season.</p>`
+    return
+  }
 
-    track.innerHTML = items.map(anime => `
+  track.innerHTML = items
+    .map(
+      (anime) => `
       <article class="card">
         <div class="card-image">
           <img src="${anime.coverImage.large}" alt="${anime.title.english || anime.title.romaji}">
         </div>
         <h3>${anime.title.english || anime.title.romaji}</h3>
         <p>⭐ ${anime.averageScore ?? "N/A"}</p>
-        <div class="actions">
-          <button class="details-btn" data-title="${anime.title.english || anime.title.romaji}">View Details</button>
-        </div>
       </article>
-    `).join("")
-
-    initCarousel(".carousel-track")
-
-    track.querySelectorAll(".details-btn").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        await openDetailsFromAniList(btn.dataset.title)
-      })
-    })
-  } catch (err) {
-    console.error("AniList error:", err)
-    track.innerHTML = `<p class="error">Failed to load AniList data.</p>`
-  }
-}
-
-async function loadAnime(endpoint) {
-  const track = document.querySelector(".carousel-track")
-  if (!track) return
-  track.innerHTML = `<div class="loader"></div>`
-
-  try {
-    const data = await getData(endpoint)
-    const items = data?.data ?? []
-    if (!items.length) {
-      track.innerHTML = `<p class="error">No results found.</p>`
-      disableCarousel()
-      return
-    }
-
-    track.innerHTML = items.map(anime => `
-      <article class="card">
-        <div class="card-image">
-          <img src="${anime.images.webp?.image_url || anime.images.jpg.image_url}" alt="${anime.title}">
-        </div>
-        <h3>${anime.title}</h3>
-        <p>⭐ ${anime.score ?? "N/A"}</p>
-        <div class="actions">
-          <button data-id="${anime.mal_id}" data-title="${anime.title}" data-img="${anime.images.jpg.image_url}" class="watch-btn">Add to Watchlist</button>
-          <button class="details-btn" data-id="${anime.mal_id}">View Details</button>
-        </div>
-      </article>
-    `).join("")
-
-    initCarousel(".carousel-track")
-
-    track.querySelectorAll(".watch-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const anime = { id: btn.dataset.id, title: btn.dataset.title, img: btn.dataset.img }
-        addToList("watchlist", anime)
-      })
-    })
-
-    track.querySelectorAll(".details-btn").forEach(btn => {
-      btn.addEventListener("click", e => {
-        e.preventDefault()
-        renderPage("details", btn.dataset.id)
-      })
-    })
-  } catch (err) {
-    console.error("Error loading anime:", err)
-    track.innerHTML = `<p class="error">Failed to load data.</p>`
-    disableCarousel()
-  }
-}
-
-async function loadGenres() {
-  const track = document.querySelector(".carousel-track")
-  if (!track) return
-
-  track.innerHTML = `<div class="loader"></div>`
-
-  try {
-    const data = await getData("/genres/anime")
-    const items = data?.data ?? []
-    if (!items.length) {
-      track.innerHTML = `<p class="error">No genres found.</p>`
-      return
-    }
-
-   
-    track.innerHTML = `
-      <div class="genres-grid">
-        ${items
-          .map(
-            g => `
-            <button class="genre-btn" data-id="${g.mal_id}">
-              ${g.name}
-            </button>`
-          )
-          .join("")}
-      </div>
     `
+    )
+    .join("")
 
-  
-    const grid = track.querySelector(".genres-grid")
-    grid.style.display = "flex"
-    grid.style.flexWrap = "wrap"
-    grid.style.gap = "0.5rem"
-    grid.style.justifyContent = "center"
-
-   
-    track.querySelectorAll(".genre-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        loadAnime(`/anime?genres=${btn.dataset.id}&limit=20`)
-      })
-    })
-  } catch (err) {
-    console.error("Error loading genres:", err)
-    track.innerHTML = `<p class="error">Failed to load genres.</p>`
-  }
+  initCarousel(".carousel-track")
 }
 
+async function renderMiniHero() {
+  const trending = await getTrendingAnime()
+  if (!trending) {
+    console.warn("No trending anime found")
+    return
+  }
 
+  const img = trending.bannerImage || trending.coverImage.large
+  const title = trending.title.english || trending.title.romaji
+
+  const container = document.createElement("section")
+  container.classList.add("mini-hero")
+  container.style.backgroundImage = `url('${img}')`
+  container.innerHTML = `
+    <div class="mini-hero-content">
+      <h3>🔥 Trending Now</h3>
+      <h2>${title}</h2>
+    </div>
+  `
+
+  const app = document.getElementById("app")
+  app.appendChild(container)
+}

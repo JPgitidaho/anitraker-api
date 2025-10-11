@@ -1,25 +1,4 @@
-import { initDropdownMenu } from "./menu.js"
-
-export async function initUI() {
-  await loadPartial("header", "/partials/header.html")
-  await loadPartial("footer", "/partials/footer.html")
-  initDropdownMenu()
-}
-
-async function loadPartial(id, path) {
-  const res = await fetch(path)
-  const html = await res.text()
-  const container = document.createElement("div")
-  container.innerHTML = html
-  if (id === "header") {
-    document.body.insertBefore(container, document.body.firstChild)
-    initHamburgerMenu()
-  } else if (id === "footer") {
-    document.body.appendChild(container)
-  }
-}
-
-function initHamburgerMenu() {
+export function initMenuToggle() {
   const toggle = document.querySelector(".menu-toggle")
   const nav = document.querySelector(".desktop-nav")
   if (!toggle || !nav) return
@@ -40,5 +19,25 @@ function initHamburgerMenu() {
     overlay.classList.remove("show")
     document.body.classList.remove("no-scroll")
     toggle.textContent = "☰"
+  })
+}
+
+export function initDropdownMenu() {
+  const dropdown = document.querySelector(".dropdown")
+  const toggle = dropdown?.querySelector(".dropdown-toggle")
+
+  if (!dropdown || !toggle) return
+
+  // Mostrar y ocultar con clic
+  toggle.addEventListener("click", e => {
+    e.preventDefault()
+    dropdown.classList.toggle("active")
+  })
+
+  // Cerrar si se hace clic fuera
+  document.addEventListener("click", e => {
+    if (!dropdown.contains(e.target)) {
+      dropdown.classList.remove("active")
+    }
   })
 }

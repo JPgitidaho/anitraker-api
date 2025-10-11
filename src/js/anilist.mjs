@@ -16,19 +16,25 @@ export async function fetchAniList(query, variables = {}) {
   }
 }
 
-export async function getSeasonalTop() {
+export async function getTopRatedAnimes() {
   const query = `
     query {
-      Page(page:1, perPage:10) {
-        media(season: FALL, seasonYear: 2025, type: ANIME, sort: POPULARITY_DESC) {
+      Page(page: 1, perPage: 25) {
+        media(
+          type: ANIME,
+          sort: SCORE_DESC,
+          averageScore_greater: 80,
+          popularity_greater: 1000
+        ) {
           id
           title {
             romaji
             english
           }
           description(asHtml: false)
+          bannerImage
           coverImage {
-            large
+            extraLarge
           }
           averageScore
         }
@@ -37,4 +43,70 @@ export async function getSeasonalTop() {
   `
   const data = await fetchAniList(query)
   return data?.Page?.media ?? []
+}
+
+// Top 10 popular animes of the current season (for carousel)
+export async function getSeasonalTop() {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = now.getMonth() + 1
+  const season =
+    month >= 3 && month <= 5
+      ? "SPRING"
+      : month >= 6 && month <= 8
+      ? "SUMMER"
+      : month >= 9 && month <= 11
+      ? "FALL"
+      : "WINTER"
+
+  const query = `
+    query ($season: MediaSeason, $year: Int) {
+      Page(page: 1, perPage: 10) {
+        media(
+          season: $season,
+          seasonYear: $year,
+          type: ANIME,
+          sort: POPULARITY_DESC
+        ) {
+          id
+          title {
+            romaji
+            english
+          }
+          coverImage {
+            large
+          }
+          averageScore
+        }
+      }
+    }
+  `
+  const variables = { season, year }
+  const data = await fetchAniList(query, variables)
+  return data?.Page?.media ?? []
+}
+export async function getTrendingAnime() {
+  const query = `
+    query {
+      Page(page: 1, perPage: 1) {
+        media(
+          type: ANIME,
+          sort: TRENDING_DESC
+        ) {
+          id
+          title {
+            english
+            romaji
+          }
+          coverImage {
+            extraLarge
+          }
+          bannerImage
+          averageScore
+        }
+      }
+    }
+  `
+  const data = await fetchAniList(query)
+  return data?.Page?.media?.[0]
 }
