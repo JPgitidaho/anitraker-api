@@ -9,17 +9,17 @@ export async function renderDetails(id) {
   const app = document.getElementById("app")
   app.innerHTML = `<p>Loading details...</p>`
 
-  // Fetch from both APIs
   const [jikanDetails, jikanChars, jikanRecs] = await Promise.all([
     getData(`/anime/${id}`),
     getData(`/anime/${id}/characters`),
     getData(`/anime/${id}/recommendations`)
-  ])
+  ]).catch(() => [null, null, null])
 
   const aniQuery = `
     query ($id: Int) {
       Media(idMal: $id, type: ANIME) {
         id
+        idMal
         title { romaji english native }
         description(asHtml: false)
         coverImage { large extraLarge }
@@ -43,27 +43,29 @@ export async function renderDetails(id) {
           }
         }
         characters(perPage: 12) {
-          nodes {
-            id
-            name { full }
-            image { large }
+          edges {
             role
+            node {
+              id
+              name { full }
+              image { large }
+            }
           }
         }
       }
     }
   `
-  const aniData = await fetchAniList(aniQuery, { id: Number(id) })
 
+  const aniData = await fetchAniList(aniQuery, { id: Number(id) })
   const ani = aniData?.Media
-  const jikan = jikanDetails?.data
+  const jikan = jikanDetails?.data || null
 
   if (!jikan && !ani) {
     app.innerHTML = `
       <section class="body-details">
         <div class="details-hero">
           <div class="details-content">
-            <img class="details-poster" src="/public/images/placeholder.jpg" alt="Not Found">
+            <img class="details-poster" src="/images/placeholder.jpg" alt="Not Found">
             <div class="hero-info">
               <h2 class="hero-title">Details Not Available</h2>
               <p>We couldn’t find information for this anime. Try again later.</p>
@@ -75,12 +77,15 @@ export async function renderDetails(id) {
     return
   }
 
-  // Merge both sources
   const anime = {
     id: ani?.idMal || jikan?.mal_id || id,
     title: ani?.title?.english || ani?.title?.romaji || jikan?.title,
     synopsis: ani?.description || jikan?.synopsis,
-    coverImage: ani?.coverImage?.large || ani?.bannerImage || jikan?.images?.jpg?.image_url,
+    coverImage:
+      ani?.coverImage?.large ||
+      ani?.bannerImage ||
+      jikan?.images?.jpg?.large_image_url ||
+      jikan?.images?.jpg?.image_url,
     score: ani?.averageScore || jikan?.score || "N/A",
     episodes: jikan?.episodes || ani?.episodes || "?",
     genres: ani?.genres || jikan?.genres?.map(g => g.name) || [],
@@ -96,10 +101,10 @@ export async function renderDetails(id) {
             image: c.character.images.jpg.image_url,
             role: c.role
           }))
-        : ani?.characters?.nodes?.map(c => ({
-            id: c.id,
-            name: c.name.full,
-            image: c.image.large,
+        : ani?.characters?.edges?.map(c => ({
+            id: c.node.id,
+            name: c.node.name.full,
+            image: c.node.image.large,
             role: c.role
           })) || [],
     recommendations:
@@ -122,7 +127,12 @@ export async function renderDetails(id) {
   }
 
   const title = anime.title || "Untitled"
-  const img = anime.coverImage || "/public/images/placeholder.jpg"
+  const img =
+    anime.coverImage ||
+    ani?.bannerImage ||
+    jikan?.images?.jpg?.large_image_url ||
+    jikan?.images?.jpg?.image_url ||
+    "/images/placeholder.jpg"
 
   app.innerHTML = `
     <section class="body-details">
@@ -166,10 +176,11 @@ export async function renderDetails(id) {
         <section class="carousel-container">
           <button class="carousel-btn left">❮</button>
           <div class="cards carousel-track character-list">
-            ${anime.characters.length
-              ? anime.characters
-                  .map(
-                    c => `
+            ${
+              anime.characters.length
+                ? anime.characters
+                    .map(
+                      c => `
               <div class="card character" data-id="${c.id}">
                 <div class="card-image">
                   <img src="${c.image}" alt="${c.name}">
@@ -178,9 +189,10 @@ export async function renderDetails(id) {
                 <p class="role">${c.role}</p>
                 <button class="view-more-btn">View More</button>
               </div>`
-                  )
-                  .join("")
-              : "<p class='error'>No characters available.</p>"}
+                    )
+                    .join("")
+                : "<p class='error'>No characters available.</p>"
+            }
           </div>
           <button class="carousel-btn right">❯</button>
         </section>
@@ -191,10 +203,11 @@ export async function renderDetails(id) {
         <section class="carousel-container">
           <button class="carousel-btn left">❮</button>
           <div class="cards carousel-track recommended-list">
-            ${anime.recommendations.length
-              ? anime.recommendations
-                  .map(
-                    r => `
+            ${
+              anime.recommendations.length
+                ? anime.recommendations
+                    .map(
+                      r => `
               <article class="card" data-id="${r.id}">
                 <div class="card-image">
                   <img src="${r.img}" alt="${r.title}">
@@ -202,9 +215,10 @@ export async function renderDetails(id) {
                 <h3>${r.title}</h3>
                 <p>⭐ ${r.score ?? "N/A"}</p>
               </article>`
-                  )
-                  .join("")
-              : "<p class='error'>No recommendations available.</p>"}
+                    )
+                    .join("")
+                : "<p class='error'>No recommendations available.</p>"
+            }
           </div>
           <button class="carousel-btn right">❯</button>
         </section>

@@ -280,22 +280,7 @@ h3 {
 }
 
 
-.details-btn {
-  background: var(--secondary);
-  color:#f1f5f9 ;
-  padding: 0.5rem 1rem;
-  margin-top: 10px;
-  border: 2px solid var(--button);
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.3s;
-}
 
-
-.details-btn:hover {
-  background: var(--button-hover);
-}
 
 /*---------------mini hero---------*/
 .mini-hero {
@@ -383,9 +368,21 @@ h3 {
 }
 
 /*-----BTNS----------*/
+.details-btn {
+  background:transparent;
+  color:var(--text-ligth) ;
+  padding: 0.5rem ;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
 
+
+.details-btn:hover {
+ color: var(--button-hover);
+}
 .icon-btn {
-  position: relative;
+  
   background: none;
   border: none;
   color: var(--text-ligth);
@@ -394,7 +391,6 @@ h3 {
   border-radius: 8px;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
   cursor: pointer;
   transition: transform .2s ease;
 }
@@ -411,7 +407,6 @@ h3 {
   color: #f9fafb;
   font-size: .7rem;
   padding: .25rem .5rem;
-  border-radius: 4px;
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
@@ -460,7 +455,6 @@ h3 {
 
 .fav-btn {
   color: var(--primary);
-   background: transparent;
   border: none;
   cursor: pointer;
   font-size: 1rem;
@@ -707,7 +701,7 @@ h3 {
   border-radius: 4px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
   width: 220px;
-  overflow: visible;
+  height: 50%;
   color: var(--text-ligth);
   display: flex;
   flex-direction: column;
@@ -724,8 +718,7 @@ h3 {
 
 .fav-thumb {
   position: relative;
-  height: 120px;
-  overflow: hidden;
+  height: 50%;
 }
 
 .fav-thumb img {
@@ -759,23 +752,6 @@ color:var(--text-dark) ;
   margin-bottom: 0.2rem;
   height: 2.6em;
   overflow: hidden;
-}
-
-.fav-info .episode {
-  font-size: 0.8rem;
-  color: #ccc;
-  margin-bottom: 0.4rem;
-}
-
-.fav-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.fav-bottom .lang {
-  font-size: 0.8rem;
-  color: #aaa;
 }
 
 

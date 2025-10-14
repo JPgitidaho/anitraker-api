@@ -63,6 +63,7 @@ export async function getSeasonalTop() {
           sort: POPULARITY_DESC
         ) {
           id
+          idMal
           title { romaji english }
           coverImage { large }
           averageScore
@@ -74,24 +75,28 @@ export async function getSeasonalTop() {
   const data = await fetchAniList(query, variables)
   return data?.Page?.media ?? []
 }
-
 export async function getTrendingAnime() {
   const query = `
     query {
-      Page(page: 1, perPage: 1) {
+      Page(page: 1, perPage: 10) {
         media(type: ANIME, sort: TRENDING_DESC) {
           id
+          idMal
           title { english romaji }
-          coverImage { extraLarge }
           bannerImage
+          coverImage { extraLarge large }
           averageScore
         }
       }
     }
   `
   const data = await fetchAniList(query)
-  return data?.Page?.media?.[0]
+  const all = data?.Page?.media ?? []
+
+  const withBanner = all.filter(a => a.bannerImage)
+  return withBanner.length ? withBanner[0] : all[0] 
 }
+
 
 export async function searchAnimes(keyword) {
   const query = `

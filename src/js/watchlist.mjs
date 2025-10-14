@@ -29,10 +29,8 @@ export function renderWatchlist() {
         <div class="fav-info">
           <h3>${anime.title}</h3>
           <div class="fav-bottom">
-            <p class="lang">Sub | Dob</p>
+            <p class="badge">Sub | Dob</p>
             <div class="actions">
-
-              <!-- Watchlist icon -->
               <button 
                 class="icon-btn watchlist-toggle"
                 aria-label="Add to Watchlist"
@@ -45,7 +43,6 @@ export function renderWatchlist() {
                 </svg>
               </button>
 
-              <!-- Favorite heart icon -->
               <button 
                 class="icon-btn fav-btn"
                 aria-label="Add to Favorites"
@@ -70,13 +67,12 @@ export function renderWatchlist() {
                     </svg>`}
               </button>
 
-              <!-- Details icon -->
-              <button class="details-btn" data-id="${anime.id}" data-tooltip="View details">
+              <a class="details-btn" data-id="${anime.id}" data-tooltip="View details">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
                   <circle cx="11" cy="11" r="8"></circle>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-              </button>
+              </a>
               <button class="remove-btn" data-id="${anime.id}" data-tooltip="Remove">🗑️</button>
             </div>
           </div>
