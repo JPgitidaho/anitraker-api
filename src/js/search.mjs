@@ -1,5 +1,3 @@
-import { renderPage } from "./ui.mjs"
-
 export async function initSearchModal() {
   const container = document.createElement("div")
   document.body.appendChild(container)
@@ -43,24 +41,40 @@ export async function initSearchModal() {
     if (handle) clearTimeout(handle)
     handle = setTimeout(async () => {
       if (q.length < 3) return
-      const items = await import("./anilist.mjs").then(m => m.searchAnimes(q))
-      results.innerHTML = items
-        .map(
-          a => `
-        <div class="result-item" data-id="${a.id}">
-          <img src="${a.coverImage.large}" alt="${a.title.english || a.title.romaji}">
-          <span>${a.title.english || a.title.romaji}</span>
-        </div>`
-        )
-        .join("")
-    }, 250)
+
+      const { searchAnimes } = await import("./anilist.mjs")
+      const { getData } = await import("./api.mjs")
+
+    
+      const aniResults = await searchAnimes(q)
+
+     
+      const merged = await Promise.all(
+        aniResults.map(async a => {
+          const title = a.title.english || a.title.romaji
+          const jikan = await getData(`/anime?q=${encodeURIComponent(title)}&limit=1`)
+          const mal_id = jikan?.data?.[0]?.mal_id
+          return {
+            id: mal_id || a.idMal || a.id, 
+            title
+          }
+        })
+      )
+
+     
+      results.innerHTML = merged
+        .filter(r => r.id) 
+        .map(r => `<div class="result-item" data-id="${r.id}">${r.title}</div>`)
+        .join("") || "<p class='error'>No results found.</p>"
+    }, 300)
   })
 
-  results.addEventListener("click", e => {
-    const card = e.target.closest(".result-item")
-    if (!card) return
-    const id = card.dataset.id
+  results.addEventListener("click", async e => {
+    const item = e.target.closest(".result-item")
+    if (!item) return
+    const id = item.dataset.id
     closeModal()
+    const { renderPage } = await import("./ui.mjs")
     renderPage("details", id)
   })
 }

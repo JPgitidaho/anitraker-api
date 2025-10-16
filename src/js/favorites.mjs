@@ -22,14 +22,11 @@ export function renderFavorites() {
   listContainer.innerHTML = list
     .map(anime => `
       <article class="fav-card">
-        <div class="fav-thumb">
-          <img src="${anime.img}" alt="${anime.title}">
+          <img class="fav-thumb" src="${anime.img}" alt="${anime.title}">
           <span class="badge">PREMIUM</span>
-        </div>
         <div class="fav-info">
           <h3>${anime.title}</h3>
-        </div>
-            <div class="actions">
+          <div class="actions">
               <button 
                 class="icon-btn watchlist-toggle" 
                 aria-label="Add to Watchlist"
@@ -41,15 +38,14 @@ export function renderFavorites() {
                   ? `<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M6 2h12a2 2 0 0 1 2 2v18l-8-4-8 4V4a2 2 0 0 1 2-2z"/></svg>`
                   : `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h12a2 2 0 0 1 2 2v18l-8-4-8 4V4a2 2 0 0 1 2-2z"/><path d="M12 8v6M9 11h6"/></svg>`}
               </button>
-              <a class="details-btn" data-id="${anime.id}" data-tooltip="View details">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                </a>
-              <button class="icon-btn remove-btn" data-id="${anime.id}" data-tooltip="Remove">🗑️</button>
+<a class="icon-btn details-btn" data-id="${anime.id}" data-tooltip="View details">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+    <circle cx="11" cy="11" r="8"></circle>
+    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</a>
+<button class="icon-btn remove-btn" data-id="${anime.id}" data-tooltip="Remove">🗑️</button>
             </div>
-          </div>
         </div>
       </article>
     `)

@@ -3,6 +3,8 @@ import { renderHome } from "./home.mjs"
 import { renderDetails } from "./details.mjs"
 import { renderFavorites } from "./favorites.mjs"
 import { renderWatchlist } from "./watchlist.mjs"
+import { renderCategory } from "./categories.mjs"
+
 
 export async function initUI() {
   await loadPartial("header", "/partials/header.html")
@@ -30,10 +32,13 @@ function setupNavigation() {
     const link = e.target.closest("[data-page]")
     if (!link) return
     e.preventDefault()
+
     const page = link.dataset.page
-    renderPage(page)
+    const id = link.dataset.id || null
+    renderPage(page, id)
   })
 }
+
 
 export function renderPage(page, id = null) {
   switch (page) {
@@ -52,5 +57,9 @@ export function renderPage(page, id = null) {
     default:
       renderHome()
       break
+      case "category":
+  if (id) renderCategory(id)
+  break
+
   }
 }

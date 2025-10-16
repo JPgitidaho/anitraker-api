@@ -230,7 +230,9 @@ h3 {
 }
 
 
-/* ---------------- MAIN ---------------- */
+main {
+  margin-top: 100px;
+}
 
 
 /* ---------------- HERO  ---------------- */
@@ -316,9 +318,9 @@ h3 {
 /* ---------------- CARDS ---------------- */
 .cards {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 1.5rem;
-  padding: 1rem 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
   justify-items: center;
 }
 
@@ -692,10 +694,11 @@ h3 {
 /*----------------favorite page-----------*/
 .favorites-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1.2rem;
-  justify-items: center;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin:0 100px;
+  gap: 1rem;
 }
+
 .fav-card {
   background: var(--card);
   border-radius: 4px;
@@ -703,8 +706,7 @@ h3 {
   width: 220px;
   height: 50%;
   color: var(--text-ligth);
-  display: flex;
-  flex-direction: column;
+
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   position: relative; 
   z-index: 1;
@@ -716,14 +718,10 @@ h3 {
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
 }
 
-.fav-thumb {
-  position: relative;
-  height: 50%;
-}
 
-.fav-thumb img {
+.fav-thumb  {
   width: 100%;
-  height: 100%;
+  height: 50%;
   object-fit: cover;
 }
 
@@ -744,7 +742,7 @@ color:var(--text-dark) ;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100%;
+
 }
 
 .fav-info h3 {
@@ -752,6 +750,78 @@ color:var(--text-dark) ;
   margin-bottom: 0.2rem;
   height: 2.6em;
   overflow: hidden;
+}
+/* ---------------- CATEGORY CARDS ---------------- */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem;
+  justify-content: center;
+}
+
+.category-card {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.category-card img {
+  width: 100%;
+  height: 340px;
+  object-fit: cover;
+  opacity: 0.85;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.category-card:hover img {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.category-card h3 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  font-size: 1.1rem;
+  text-align: center;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  color: #fff;
+  text-shadow: 0 0 10px #000;
+  margin: 0;
+}
+
+.category-card .overlay-actions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.category-card:hover .overlay-actions {
+  opacity: 1;
+}
+
+.category-card .icon-btn {
+  color: #fff;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 6px;
+  padding: 6px;
+  width: 36px;
+  height: 36px;
+}
+
+.category-card .icon-btn:hover {
+  background: var(--button-hover);
+  color: #fff;
+  transform: scale(1.1);
 }
 
 
@@ -799,6 +869,17 @@ footer {
   top: 0;
   right: 2rem;
   z-index: 1100;
+}
+.result-item {
+  padding: 0.6rem 0.8rem;
+  cursor: pointer;
+  color: #fff;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.result-item:hover {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 /* --- NAVIGATION HAMB STYLES --- */

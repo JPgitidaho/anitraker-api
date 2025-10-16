@@ -22,14 +22,9 @@ export function renderWatchlist() {
   listContainer.innerHTML = list
     .map(anime => `
       <article class="fav-card">
-        <div class="fav-thumb">
-          <img src="${anime.img}" alt="${anime.title}">
-          <span class="badge">PREMIUM</span>
-        </div>
+          <img class="fav-thumb" src="${anime.img}" alt="${anime.title}">
         <div class="fav-info">
           <h3>${anime.title}</h3>
-          <div class="fav-bottom">
-            <p class="badge">Sub | Dob</p>
             <div class="actions">
               <button 
                 class="icon-btn watchlist-toggle"
@@ -67,16 +62,15 @@ export function renderWatchlist() {
                     </svg>`}
               </button>
 
-              <a class="details-btn" data-id="${anime.id}" data-tooltip="View details">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-              </a>
-              <button class="remove-btn" data-id="${anime.id}" data-tooltip="Remove">🗑️</button>
+<a class="icon-btn details-btn" data-id="${anime.id}" data-tooltip="View details">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+    <circle cx="11" cy="11" r="8"></circle>
+    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</a> 
+<button class="remove-btn" data-id="${anime.id}" data-tooltip="Remove">🗑️</button>
             </div>
           </div>
-        </div>
       </article>
     `)
     .join("")
